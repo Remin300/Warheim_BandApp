@@ -530,42 +530,19 @@ function addUnit() {
 
     if (!roster) return;
 
-    const name = getTextInput("Podaj nazwę jednostki:");
-    if (name === null) return;
-
-    const cost = getNumberInput("Podaj podstawowy koszt jednostki:");
-    if (cost === null) return;
-
     const statystyki = {};
 
     for (const stat of STAT_DEFINITIONS) {
-        const obecne = getNumberInput(`${stat.label} obecne:`);
-        if (obecne === null) return;
-
-        const maksymalne = getNumberInput(
-            `${stat.label} maksymalne:`,
-            obecne
-        );
-
-        if (maksymalne === null) return;
-
-        if (obecne > maksymalne) {
-            alert(
-                `Statystyka ${stat.label}: wartość obecna nie może być większa od maksymalnej.`
-            );
-            return;
-        }
-
         statystyki[stat.key] = {
-            obecne,
-            maksymalne
+            obecne: 0,
+            maksymalne: 0
         };
     }
 
     const unit = {
         id: generateId(),
-        nazwa: name,
-        koszt,
+        nazwa: "",
+        koszt: 0,
         statystyki,
         przedmioty: [],
         zdolnosci: []
@@ -578,8 +555,6 @@ function addUnit() {
 
     persistAndRender();
 }
-
-
 function editUnit() {
     const unit = findUnit();
 
