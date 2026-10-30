@@ -498,7 +498,7 @@ function editRoster() {
 }
 
 
-function deleteRoster() {
+function deleteRoster() { 
     const roster = findRoster();
 
     if (!roster) return;
