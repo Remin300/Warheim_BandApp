@@ -329,10 +329,9 @@ function renderUnits() {
         card.querySelector(".unit-card-cost").textContent =
             `${calculateUnitCost(unit)} pkt`;
 
-        card.querySelector(".btnSelectUnit").addEventListener("click", () => {
+        card.addEventListener("click", () => {
             selectedUnitId = unit.id;
             editingUnitDraft = null;
-
             renderApp();
         });
 
@@ -340,6 +339,18 @@ function renderUnits() {
     });
 }
 
+// mienimalizowanie paneli
+const btnMinimalizuj = document.getElementById("btnMinimalizuj");
+const rostersPanel = document.querySelector(".rosters-panel");
+const appContainer = document.querySelector(".app-container");
+const rosterDetail = document.querySelector(".roster-details");
+
+
+btnMinimalizuj.addEventListener("click", () => {
+    rostersPanel.classList.toggle("minimized");
+    appContainer.classList.toggle("minimized");
+    rosterDetail.classList.toggle("minimized");
+});
 
 /* =========================================
    6. EDYTOR JEDNOSTKI

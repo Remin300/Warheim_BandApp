@@ -12,13 +12,14 @@
 
     <header class="app-header">
         <div class="app-logo">
-            <h1>Battle Roster</h1>
+            <h1>Warheim FS</h1>
             <span>Menedżer rozpisek</span>
         </div>
 
         <div class="file-actions">
             <button id="btnOpenJson" type="button" class="btn-small">Otwórz JSON</button>
             <button id="btnSaveJson" type="button" class="btn-small">Zapisz JSON</button>
+            <button id="btnMinimalizuj" type="button" class="btn-small">|||</button>
 
             <input type="file"
                    id="jsonFileInput"
@@ -233,14 +234,17 @@
         </main>
     </div>
 
+
+
+
     <template id="unitTemplate">
         <article class="unit-card">
-            <div class="unit-card-header">
-                <h3 class="unit-card-name"></h3>
+            <span class="unit-card-name"></span>
+
+            <div class="unit-card-actions">
+                <icon-placeholder></icon-placeholder>
                 <span class="unit-card-cost"></span>
             </div>
-
-            <button type="button" class="btnSelectUnit" class="btn-small">Szczegóły</button>
         </article>
     </template>
 
