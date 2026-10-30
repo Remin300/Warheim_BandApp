@@ -421,11 +421,14 @@ select {
 ========================================= */
 
 .unit-stats {
-    padding: 2px;
+    padding: 0px;
     background: var(--bg-card);
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
-    margin-bottom: 2px;
+    margin-bottom: 0px;
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
     .unit-stats h3 {
@@ -433,11 +436,21 @@ select {
         margin-bottom: 15px;
     }
 
+
+.stats-section {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
 .stats-grid {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: 2px;
+    gap: 0px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stat-group {
@@ -450,8 +463,43 @@ select {
     border: 1px solid var(--border-color);
     box-sizing: border-box;
     padding: 3px;
-    gap: 2px;
+    gap: 0px;
 }
+
+
+
+
+    .stat-group label {
+        font-size: 12px;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    .stat-group input {
+        width: 32px;
+        max-width: 100%;
+        padding: 2px;
+        font-size: 14px;
+        line-height: 1.2;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+@media (max-width: 480px) {
+    .stats-section {
+        padding: 0px;
+    }
+
+    .stat-group label {
+        font-size: 10px;
+    }
+
+    .stat-group input {
+        font-size: 10px;
+    }
+}
+
+
 .stat-group2 {
     flex: 0 0 auto;
     display: flex;
@@ -464,25 +512,6 @@ select {
     padding: 3px;
     gap: 2px;
 }
-
-
-
-    .stat-group label {
-        font-size: 12px;
-        line-height: 1.2;
-        text-align: center;
-    }
-
-    .stat-group input {
-        width: 42px;
-        max-width: 100%;
-        padding: 2px;
-        font-size: 14px;
-        line-height: 1.2;
-        box-sizing: border-box;
-        text-align: center;
-    }
-
 .stat-group2 input {
     width: 55px;
     min-width: 55px;
