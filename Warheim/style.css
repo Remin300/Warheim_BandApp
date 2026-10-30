@@ -1,0 +1,684 @@
+
+/* =========================================
+   1. ZMIENNE GLOBALNE
+========================================= */
+
+:root {
+    --bg-main: #151719;
+    --bg-panel: #202326;
+    --bg-card: #292d30;
+    --bg-input: #181b1d;
+    --bg-hover: #343a3e;
+    --border-color: #41464a;
+    --accent: #c6a15b;
+    --accent-hover: #dfbd78;
+    --accent-dark: #806637;
+    --text-main: #e8e5df;
+    --text-secondary: #a5a39d;
+    --text-muted: #777973;
+    --danger: #c45b55;
+    --success: #79a875;
+    --radius: 8px;
+    --transition: 0.2s ease;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 11px;
+    line-height: 1.2;
+    border-radius: 5px;
+    cursor: pointer;
+    width: auto;
+    min-width: unset;
+}
+/* =========================================
+   2. RESET I PODSTAWY
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* =========================================
+   3. NAGŁÓWEK
+========================================= */
+
+.app-header {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 30px;
+    background: #1c1f21;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.app-logo h1 {
+    color: var(--accent);
+    font-size: 25px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.app-logo span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* =========================================
+   4. PRZYCISKI
+========================================= */
+
+button {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    color: var(--text-main);
+    background: var(--bg-card);
+    transition: var(--transition);
+}
+
+    button:hover {
+        background: var(--bg-hover);
+        border-color: var(--accent-dark);
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+#btnSaveJson,
+#btnAddRoster,
+#btnAddUnit,
+#btnAddItem,
+#btnAddSkill {
+    color: #171717;
+    background: var(--accent);
+    border-color: var(--accent);
+    font-weight: 600;
+}
+
+    #btnSaveJson:hover,
+    #btnAddRoster:hover,
+    #btnAddUnit:hover,
+    #btnAddItem:hover,
+    #btnAddSkill:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+    }
+
+#btnDeleteRoster,
+#btnDeleteUnit {
+    color: #e58a84;
+}
+
+    #btnDeleteRoster:hover,
+    #btnDeleteUnit:hover {
+        background: #472c2b;
+        border-color: var(--danger);
+    }
+
+
+/* =========================================
+   5. GŁÓWNY UKŁAD
+========================================= */
+
+.app-container {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: calc(100vh - 76px);
+}
+
+
+/* =========================================
+   6. PANEL ROZPISEK
+========================================= */
+
+.rosters-panel {
+    padding: 22px 16px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+    .panel-header h2 {
+        font-size: 17px;
+    }
+
+.rosters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.roster-card {
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+    .roster-card:hover {
+        background: var(--bg-hover);
+        border-color: var(--accent-dark);
+    }
+
+    .roster-card.active {
+        background: #393329;
+        border-color: var(--accent);
+    }
+
+    .roster-card h3 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .roster-card span {
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+
+/* =========================================
+   7. GŁÓWNA ZAWARTOŚĆ
+========================================= */
+
+.main-content {
+    min-width: 0;
+    padding: 28px;
+}
+
+.roster-details,
+.units-section,
+.unit-editor {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 22px;
+}
+
+
+/* =========================================
+   8. NAGŁÓWKI SEKCJI
+========================================= */
+
+.roster-header,
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+    .roster-header h2 {
+        font-size: 23px;
+        color: var(--accent);
+    }
+
+    .roster-header span {
+        display: block;
+        color: var(--text-secondary);
+        margin-top: 3px;
+    }
+
+.roster-actions,
+.unit-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.section-header {
+    margin-bottom: 18px;
+}
+
+    .section-header h2 {
+        font-size: 19px;
+    }
+
+    .section-header h3 {
+        font-size: 16px;
+    }
+
+.roster-summary {
+    display: flex;
+    gap: 45px;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.summary-item span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.summary-item strong {
+    display: block;
+    color: var(--accent);
+    font-size: 22px;
+    margin-top: 4px;
+}
+
+
+/* =========================================
+   9. LISTA JEDNOSTEK
+========================================= */
+
+.units-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.unit-card {
+    padding: 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+    .unit-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+    }
+
+    .unit-card.selected {
+        border-color: var(--accent);
+        background: #393329;
+    }
+
+.unit-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.unit-card-name {
+    font-size: 16px;
+}
+
+.unit-card-cost {
+    color: var(--accent);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+
+    .unit-card-stats span {
+        flex: 1;
+        padding: 7px;
+        text-align: center;
+        background: var(--bg-input);
+        border-radius: 5px;
+        color: var(--text-secondary);
+    }
+
+.btnSelectUnit {
+    width: 100%;
+}
+
+
+/* =========================================
+   10. EDYTOR JEDNOSTKI
+========================================= */
+
+.unit-editor {
+    min-height: 200px;
+}
+
+.unit-basic-info {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+    margin-bottom: 2px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .form-group label,
+    .stat-group label {
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 9px 11px;
+    color: var(--text-main);
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    outline: none;
+    transition: var(--transition);
+}
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--accent);
+    }
+
+    input:read-only {
+        color: var(--text-secondary);
+        cursor: default;
+    }
+
+
+/* =========================================
+   11. STATYSTYKI
+========================================= */
+
+.unit-stats {
+    padding: 2px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2px;
+}
+
+    .unit-stats h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+.stats-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 2px;
+}
+
+.stat-group {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    padding: 3px;
+    gap: 2px;
+}
+.stat-group2 {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    padding: 3px;
+    gap: 2px;
+}
+
+    .stat-group label {
+        font-size: 12px;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    .stat-group input {
+        width: 42px;
+        max-width: 100%;
+        padding: 2px;
+        font-size: 14px;
+        line-height: 1.2;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+.stat-group2 input {
+    width: 55px;
+    min-width: 55px;
+    max-width: none;
+    padding: 2px;
+    font-size: 14px;
+    line-height: 1.2;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+    .stat-group span {
+        color: var(--text-muted);
+    }
+
+
+/* =========================================
+   12. PRZEDMIOTY I ZDOLNOŚCI
+========================================= */
+
+.unit-items,
+.unit-skills {
+    margin-top: 25px;
+}
+
+.item-card,
+.skill-card {
+    padding: 14px;
+    margin-bottom: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+
+
+
+}
+.item-name {
+    font-size: 16px;
+    margin: 0;
+    flex: 1;
+    max-width: 60ch;
+}
+
+.item-card-header,
+.skill-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.item-name,
+.skill-name {
+    font-size: 15px;
+}
+
+.item-cost,
+.skill-cost {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+
+
+.item-stats {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.item-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 12px;
+    min-width: 75px;
+    max-width: 120px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+    .item-stat label {
+        font-size: 10px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .item-stat span {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+.item-stat-cost {
+    min-width: 55px;
+    max-width: 65px;
+    text-align: center;
+}
+
+    .item-stat-cost span {
+        color: var(--accent);
+    }
+
+.item-description {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+
+    .item-stats span {
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+.item-description,
+.skill-description {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   13. RESPONSYWNOŚĆ
+========================================= */
+
+@media (max-width: 900px) {
+
+    .app-container {
+        grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .main-content {
+        padding: 18px;
+    }
+
+    .roster-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .app-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .file-actions {
+        width: 100%;
+    }
+
+        .file-actions button {
+            flex: 1;
+        }
+
+    .app-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rosters-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .rosters-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .main-content {
+        padding: 12px;
+    }
+
+    .roster-summary {
+        gap: 25px;
+    }
+
+    .unit-basic-info,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .roster-actions {
+        flex-wrap: wrap;
+    }
+}
