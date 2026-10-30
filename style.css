@@ -616,14 +616,20 @@ select {
         color: var(--accent);
     }
 
-.item-description {
+.item-description,
+.skill-description {
     color: var(--text-secondary);
     font-size: 13px;
     line-height: 1.6;
     margin: 0;
     padding-top: 10px;
     border-top: 1px solid var(--border-color);
+    overflow-wrap: anywhere;
+    word-break: normal;
+    white-space: normal;
+    min-width: 0;
 }
+
 
 
     .item-stats span {
