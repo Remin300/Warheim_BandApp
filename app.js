@@ -64,9 +64,16 @@ function normalizeData(data) {
     }
 
     data.rozpiski.forEach(roster => {
+
+        // Dodatkowe dane rozpiski
+        roster.opisDodatkowy ??= "";
+        roster.zloto ??= 0;
+        roster.spaczenie ??= 0;
+
         if (!Array.isArray(roster.jednostki)) {
             roster.jednostki = [];
         }
+
 
         roster.jednostki.forEach(unit => {
             ensureUnitStats(unit);
@@ -275,7 +282,9 @@ function renderRosters() {
         container.appendChild(card);
     });
 }
-
+const description = document.getElementById("rosterDescription");
+const gold = document.getElementById("rosterGold");
+const corruption = document.getElementById("rosterCorruption");
 
 function renderRosterDetails() {
     const roster = findRoster();
@@ -296,6 +305,14 @@ function renderRosterDetails() {
         count.textContent = "Brak jednostek";
         totalCost.textContent = "0 pkt";
         totalUnits.textContent = "0";
+
+        description.value = "";
+        gold.value = 0;
+        corruption.value = 0;
+
+        description.disabled = true;
+        gold.disabled = true;
+        corruption.disabled = true;
         return;
     }
 
@@ -303,6 +320,14 @@ function renderRosterDetails() {
     count.textContent = `${roster.jednostki.length} jednostek`;
     totalCost.textContent = `${calculateRosterCost(roster)} pkt`;
     totalUnits.textContent = roster.jednostki.length;
+
+    description.disabled = false;
+    gold.disabled = false;
+    corruption.disabled = false;
+
+    description.value = roster.opisDodatkowy ?? "";
+    gold.value = roster.zloto ?? 0;
+    corruption.value = roster.spaczenie ?? 0;
 }
 
 
@@ -478,6 +503,11 @@ function addRoster() {
     const roster = {
         id: generateId(),
         nazwa: name,
+
+        opisDodatkowy: "",
+        zloto: 0,
+        spaczenie: 0,
+
         jednostki: []
     };
 
@@ -508,6 +538,22 @@ function editRoster() {
     persistAndRender();
 }
 
+function updateRosterAdditionalInfo() {
+    const roster = findRoster();
+
+    if (!roster) return;
+
+    roster.opisDodatkowy =
+        document.getElementById("rosterDescription").value;
+
+    roster.zloto =
+        Math.max(0, Number(document.getElementById("rosterGold").value) || 0);
+
+    roster.spaczenie =
+        Math.max(0, Number(document.getElementById("rosterCorruption").value) || 0);
+
+    saveToLocalStorage();
+}
 
 function deleteRoster() { 
     const roster = findRoster();
@@ -754,6 +800,20 @@ function renderItems(unit) {
 
             descriptionElement.replaceWith(descriptionInput);
 
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Usuń przedmiot";
+
+            deleteButton.addEventListener("click", () => {
+                deleteItem(item.id);
+            });
+
+            clone.appendChild(deleteButton);
+
+
+       
+
         } else {
             nameElement.textContent = item.nazwa ?? "";
             costElement.textContent = `${item.koszt ?? 0} pkt`;
@@ -821,7 +881,7 @@ function editItem(itemId) {
 }
 
 
-function deleteItem(itemId) {
+function deleteItem2(itemId) {
     const unit = findUnit();
 
     if (!unit) return;
@@ -843,6 +903,15 @@ function deleteItem(itemId) {
     persistAndRender();
 }
 
+
+function deleteItem(itemId) {
+    if (!editingUnitDraft) return;
+
+    editingUnitDraft.przedmioty =
+        editingUnitDraft.przedmioty.filter(item => item.id !== itemId);
+
+    renderUnitEditor();
+}
 
 /* =========================================
    10. ZDOLNOŚCI
@@ -1182,6 +1251,15 @@ function initializeEvents() {
     document.getElementById("btnDeleteRoster")
         .addEventListener("click", deleteRoster);
 
+
+    document.getElementById("rosterDescription")
+        .addEventListener("input", updateRosterAdditionalInfo);
+
+    document.getElementById("rosterGold")
+        .addEventListener("change", updateRosterAdditionalInfo);
+
+    document.getElementById("rosterCorruption")
+        .addEventListener("change", updateRosterAdditionalInfo);
 
     // Jednostki
 

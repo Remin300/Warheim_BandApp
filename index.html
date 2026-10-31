@@ -65,6 +65,24 @@
                         <strong id="rosterTotalUnits">0</strong>
                     </div>
                 </div>
+
+                <div class="roster-additional-info">
+                    <div class="form-group">
+                        <label for="rosterDescription">Opis dodatkowy</label>
+                        <textarea id="rosterDescription" rows="3"
+                                  placeholder="Dodaj opis rozpiski..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rosterGold">Złoto</label>
+                        <input id="rosterGold" type="number" min="0" step="1" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rosterCorruption">Spaczeń</label>
+                        <input id="rosterCorruption" type="number" min="0" step="1" value="0">
+                    </div>
+                </div>
             </section>
 
             <section class="units-section">
@@ -247,13 +265,14 @@
             </div>
         </article>
     </template>
-
     <template id="itemTemplate">
         <article class="item-card">
             <div class="item-card-header">
                 <h4 class="item-name"></h4>
 
-
+                <button type="button" class="btnDeleteItem btn-small">
+                    Usuń
+                </button>
 
                 <div class="item-stats">
                     <div class="stat-group">
@@ -266,9 +285,7 @@
                         <span class="item-strength"></span>
                     </div>
 
-              
-                        <span class="item-cost"></span>
-                    
+                    <span class="item-cost"></span>
                 </div>
             </div>
 
@@ -280,6 +297,11 @@
         <article class="skill-card">
             <div class="skill-card-header">
                 <h4 class="skill-name"></h4>
+
+                <button type="button" class="btnDeleteSkill btn-small">
+                    Usuń
+                </button>
+
                 <span class="skill-cost"></span>
             </div>
 
