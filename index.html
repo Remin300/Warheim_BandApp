@@ -82,6 +82,19 @@
                         <label for="rosterCorruption">Spaczeń</label>
                         <input id="rosterCorruption" type="number" min="0" step="1" value="0">
                     </div>
+
+
+                    <div class="roster-faction-skills">
+                        <div class="section-header">
+                            <h3>Zdolności frakcyjne</h3>
+                            <button id="btnAddFactionSkill" type="button" class="btn-small">
+                                Dodaj zdolność
+                            </button>
+                        </div>
+
+                        <div id="rosterFactionSkillsList"></div>
+                    </div>
+
                 </div>
             </section>
 
@@ -101,6 +114,7 @@
 
                     <div class="unit-actions">
                         <button id="btnEditUnit" type="button" class="btn-small">Edytuj</button>
+                        <button id="btnDuplicateUnit" type="button" class="btn-small">Duplikuj</button>
                         <button id="btnDeleteUnit" type="button" class="btn-small">Usuń</button>
                         <button id="btnSaveUnitChanges" type="button" hidden class="btn-small">Zapisz</button>
                         <button id="btnCancelUnitChanges" type="button" hidden class="btn-small">Anuluj</button>
@@ -114,9 +128,26 @@
                     </div>
 
                     <div class="form-group">
+
                         <label for="unitCost" id="unitCostLabel" hidden>Koszt</label>
                         <input type="number" class="unit-card-cost" id="unitCost" readonly hidden>
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label for="unitCost" id="unitExpLabel" hidden>exp</label>
+                        <input type="number" class="unit-exp" id="unitExp" readonly hidden>
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="unitCost" id="progiAwansu" hidden>Progi awansu:</label>
+                        <label for="unitCost" id="progiAwansu1" hidden>Bohater:| 2, 4, 6, 8, 11, 14, 17, 20, 24, 28, 32, 36, 41, 46, 51, 57, 63, 69, 76, 83, 90 |</label>
+                        <label for="unitCost" id="progiAwansu2" hidden>Stronnik:| 2, 5, 9, 14 |</label>
+                    </div>
+
                 </div>
 
                 <div class="unit-stats">
@@ -230,21 +261,37 @@
                 </div>
 
                 <div class="unit-items">
+
                     <div class="section-header">
                         <h3>Przedmioty</h3>
-                        <button id="btnAddItem" type="button" hidden class="btn-small">+ Dodaj przedmiot</button>
+
                     </div>
 
                     <div id="unitItemsList"></div>
+
+                    <div class="section-header">
+
+                        <button id="btnAddItem" type="button" hidden class="btn-small">+ Dodaj przedmiot</button>
+                    </div>
+
+
                 </div>
 
                 <div class="unit-skills">
+
                     <div class="section-header">
                         <h3>Zdolności</h3>
-                        <button id="btnAddSkill" type="button" hidden class="btn-small">+ Dodaj zdolność</button>
+
                     </div>
 
                     <div id="unitSkillsList"></div>
+
+                    <div class="section-header">
+
+                        <button id="btnAddSkill" type="button" hidden class="btn-small">+ Dodaj zdolność</button>
+                    </div>
+
+
                 </div>
 
             </section>
@@ -270,7 +317,7 @@
             <div class="item-card-header">
                 <h4 class="item-name"></h4>
 
-           
+
                 <div class="item-stats">
                     <div class="stat-group">
                         <label>Zasięg</label>
@@ -301,6 +348,16 @@
 
             <p class="skill-description"></p>
         </article>
+    </template>
+
+    <template id="factionSkillTemplate">
+        <div class="skill-card">
+            <div class="skill-header">
+                <span class="skill-name"></span>
+                <span class="skill-cost"></span>
+            </div>
+            <p class="skill-description"></p>
+        </div>
     </template>
 
 </body>

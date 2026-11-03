@@ -409,19 +409,17 @@ button {
 .unit-editor {
     min-height: 200px;
 }
-
 .unit-basic-info {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 6fr 1fr 1fr;
     gap: 5px;
+    justify-items: start;
 }
-
-
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 1px;
 }
 
     .form-group label,
@@ -616,6 +614,12 @@ select {
     font-size: 10px;
 }
 
+.unit-exp {
+
+    font-weight: 700;
+    max-width: 10ch;
+    font-size: 10px;
+}
 
 
 .item-stats {

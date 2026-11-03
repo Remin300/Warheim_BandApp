@@ -222,7 +222,19 @@ function loadFromLocalStorage() {
             throw new Error("Nieprawidłowa struktura danych.");
         }
 
+
+
+
         appData = normalizeData(parsedData);
+
+        appData.rozpiski.forEach(roster => {
+            roster.zdolnosciFrakcyjne ??= [];
+
+            roster.jednostki.forEach(unit => {
+                unit.exp ??= 0;
+                unit.zdolnosci ??= [];
+            });
+        });
 
     } catch (error) {
         console.error("Błąd odczytu danych:", error);
@@ -313,6 +325,7 @@ function renderRosterDetails() {
         description.disabled = true;
         gold.disabled = true;
         corruption.disabled = true;
+     //   renderFactionSkills(null);
         return;
     }
 
@@ -328,6 +341,9 @@ function renderRosterDetails() {
     description.value = roster.opisDodatkowy ?? "";
     gold.value = roster.zloto ?? 0;
     corruption.value = roster.spaczenie ?? 0;
+
+
+    //renderFactionSkills(editingRosterDraft ?? roster);
 }
 
 
@@ -353,6 +369,8 @@ function renderUnits() {
 
         card.querySelector(".unit-card-cost").textContent =
             `${calculateUnitCost(unit)} pkt`;
+
+
 
         card.addEventListener("click", () => {
             selectedUnitId = unit.id;
@@ -389,6 +407,9 @@ function updateUnitDraftFromInputs() {
 
     editingUnitDraft.koszt =
         Number(document.getElementById("unitCost").value);
+
+    editingUnitDraft.exp =
+        Number(document.getElementById("unitExp").value);
 
     STAT_DEFINITIONS.forEach(stat => {
         const currentInput = document.getElementById(
@@ -431,9 +452,14 @@ function renderUnitEditor() {
 
     document.getElementById("unitName").hidden = !isEditing;
     document.getElementById("unitCost").hidden = !isEditing;
+    document.getElementById("unitExp").hidden = !isEditing;
 
     document.getElementById("unitNameLabel").hidden = !isEditing;
     document.getElementById("unitCostLabel").hidden = !isEditing;
+    document.getElementById("unitExpLabel").hidden = !isEditing;
+    document.getElementById("progiAwansu").hidden = !isEditing;
+    document.getElementById("progiAwansu1").hidden = !isEditing;
+    document.getElementById("progiAwansu2").hidden = !isEditing;
 
     document.getElementById("unitMaxStats").hidden = !isEditing;
     document.getElementById("unitStatsH3").hidden = !isEditing;
@@ -450,6 +476,9 @@ function renderUnitEditor() {
     document.getElementById("unitCost").value =
         displayedUnit.koszt;
 
+    document.getElementById("unitExp").value =
+        displayedUnit.exp;
+
     STAT_DEFINITIONS.forEach(stat => {
         document.getElementById(
             `unit${stat.key.toUpperCase()}Current`
@@ -464,6 +493,7 @@ function renderUnitEditor() {
 
     renderItems(displayedUnit);
     renderSkills(displayedUnit);
+    renderF
 }
 
 
@@ -471,6 +501,7 @@ function setUnitFieldsEditable(editable) {
     const fields = [
         "unitName",
         "unitCost",
+        "unitExp",
         ...STAT_DEFINITIONS.flatMap(stat => [
             `unit${stat.key.toUpperCase()}Current`,
             `unit${stat.key.toUpperCase()}Max`
@@ -578,6 +609,148 @@ function deleteRoster() {
 }
 
 
+function renderFactionSkills(roster) {
+    const list = document.getElementById("rosterFactionSkillsList");
+    const template = document.getElementById("factionSkillTemplate");
+
+    list.innerHTML = "";
+
+    if (!roster) return;
+
+    roster.zdolnosciFrakcyjne ??= [];
+
+    const isEditing = editingRosterDraft !== null;
+
+    roster.zdolnosciFrakcyjne.forEach((skill, index) => {
+        const clone = template.content.firstElementChild.cloneNode(true);
+
+        const nameElement = clone.querySelector(".skill-name");
+        const costElement = clone.querySelector(".skill-cost");
+        const descriptionElement = clone.querySelector(".skill-description");
+
+        if (isEditing) {
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.className = nameElement.className;
+            nameInput.placeholder = "Nazwa zdolności";
+            nameInput.value = skill.nazwa ?? "";
+
+            nameInput.addEventListener("input", () => {
+                skill.nazwa = nameInput.value;
+            });
+
+            nameElement.replaceWith(nameInput);
+
+            const costInput = document.createElement("input");
+            costInput.type = "number";
+            costInput.className = costElement.className;
+            costInput.placeholder = "Koszt";
+            costInput.value = skill.koszt ?? 0;
+
+            costInput.addEventListener("input", () => {
+                skill.koszt = Number(costInput.value);
+            });
+
+            costElement.replaceWith(costInput);
+
+            const descriptionInput = document.createElement("textarea");
+            descriptionInput.className = descriptionElement.className;
+            descriptionInput.placeholder = "Opis zdolności";
+            descriptionInput.value = skill.opis ?? "";
+
+            descriptionInput.addEventListener("input", () => {
+                skill.opis = descriptionInput.value;
+            });
+
+            descriptionElement.replaceWith(descriptionInput);
+
+            // Przesuwanie w górę
+            const upButton = document.createElement("button");
+            upButton.type = "button";
+            upButton.textContent = "↑";
+            upButton.disabled = index === 0;
+
+            upButton.addEventListener("click", () => {
+                moveFactionSkill(skill.id, -1);
+            });
+
+            // Przesuwanie w dół
+            const downButton = document.createElement("button");
+            downButton.type = "button";
+            downButton.textContent = "↓";
+            downButton.disabled = index === roster.zdolnosciFrakcyjne.length - 1;
+
+            downButton.addEventListener("click", () => {
+                moveFactionSkill(skill.id, 1);
+            });
+
+            // Usuwanie
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Usuń";
+
+            deleteButton.addEventListener("click", () => {
+                deleteFactionSkill(skill.id);
+            });
+
+            clone.appendChild(upButton);
+            clone.appendChild(downButton);
+            clone.appendChild(deleteButton);
+
+        } else {
+            nameElement.textContent = skill.nazwa ?? "";
+            costElement.textContent = `${skill.koszt ?? 0} pkt`;
+            descriptionElement.textContent = skill.opis ?? "";
+        }
+
+        list.appendChild(clone);
+    });
+}
+
+function deleteFactionSkill(skillId) {
+    if (!editingRosterDraft) return;
+
+    editingRosterDraft.zdolnosciFrakcyjne =
+        editingRosterDraft.zdolnosciFrakcyjne.filter(
+            skill => skill.id !== skillId
+        );
+
+    renderFactionSkills(editingRosterDraft);
+}
+
+function moveFactionSkill(skillId, direction) {
+    if (!editingRosterDraft) return;
+
+    const skills = editingRosterDraft.zdolnosciFrakcyjne;
+
+    const currentIndex = skills.findIndex(skill => skill.id === skillId);
+    if (currentIndex === -1) return;
+
+    const newIndex = currentIndex + direction;
+
+    if (newIndex < 0 || newIndex >= skills.length) return;
+
+    [skills[currentIndex], skills[newIndex]] =
+        [skills[newIndex], skills[currentIndex]];
+
+    renderFactionSkills(editingRosterDraft);
+}
+
+
+function addFactionSkill() {
+    if (!editingRosterDraft) return;
+
+    editingRosterDraft.zdolnosciFrakcyjne.push({
+        id: generateId(),
+        nazwa: "",
+        koszt: 0,
+        opis: ""
+    });
+
+    renderFactionSkills(editingRosterDraft);
+}
+
+
 /* =========================================
    8. JEDNOSTKI
 ========================================= */
@@ -600,6 +773,7 @@ function addUnit() {
         id: generateId(),
         nazwa: "",
         koszt: 0,
+        exp: 0,
         statystyki,
         przedmioty: [],
         zdolnosci: []
@@ -623,7 +797,42 @@ function editUnit() {
 
     renderUnitEditor();
 }
+function duplicateUnit() {
+    if (!selectedRosterId || !selectedUnitId) return;
 
+    const roster = findRoster(selectedRosterId);
+    if (!roster) return;
+
+    const sourceUnit = editingUnitDraft ?? findUnit(selectedUnitId);
+    if (!sourceUnit) return;
+
+    // Głęboka kopia jednostki
+    const duplicatedUnit = JSON.parse(JSON.stringify(sourceUnit));
+
+    // Nowe ID jednostki
+    duplicatedUnit.id = generateId();
+    duplicatedUnit.nazwa = `${sourceUnit.nazwa} (kopia)`;
+
+    // Nowe ID przedmiotów
+    duplicatedUnit.przedmioty = duplicatedUnit.przedmioty.map(item => ({
+        ...item,
+        id: generateId()
+    }));
+
+    // Nowe ID zdolności
+    duplicatedUnit.zdolnosci = duplicatedUnit.zdolnosci.map(skill => ({
+        ...skill,
+        id: generateId()
+    }));
+
+    // Dodanie kopii do rozpiski
+    roster.jednostki.push(duplicatedUnit);
+
+    selectedUnitId = duplicatedUnit.id;
+    editingUnitDraft = null;
+
+    persistAndRender();
+}
 
 function saveUnitChanges() {
     if (!editingUnitDraft) return;
@@ -733,7 +942,7 @@ function renderItems(unit) {
 
     const isEditing = editingUnitDraft !== null;
 
-    unit.przedmioty.forEach(item => {
+    unit.przedmioty.forEach((item, index) => {
         const clone = template.content.firstElementChild.cloneNode(true);
 
         const nameElement = clone.querySelector(".item-name");
@@ -803,12 +1012,34 @@ function renderItems(unit) {
 
             const deleteButton = document.createElement("button");
             deleteButton.type = "button";
-            deleteButton.textContent = "Usuń przedmiot";
+            deleteButton.textContent = "Usuń";
 
             deleteButton.addEventListener("click", () => {
                 deleteItem(item.id);
             });
 
+            const upButton = document.createElement("button");
+            upButton.type = "button";
+            upButton.textContent = "↑";
+            upButton.title = "Przesuń w górę";
+            upButton.disabled = index === 0;
+
+            upButton.addEventListener("click", () => {
+                moveEntry("przedmioty", item.id, -1);
+            });
+
+            const downButton = document.createElement("button");
+            downButton.type = "button";
+            downButton.textContent = "↓";
+            downButton.title = "Przesuń w dół";
+            downButton.disabled = index === unit.przedmioty.length - 1;
+
+            downButton.addEventListener("click", () => {
+                moveEntry("przedmioty", item.id, 1);
+            });
+
+            clone.appendChild(upButton);
+            clone.appendChild(downButton);
             clone.appendChild(deleteButton);
 
 
@@ -925,7 +1156,7 @@ function renderSkills(unit) {
 
     const isEditing = editingUnitDraft !== null;
 
-    unit.zdolnosci.forEach(skill => {
+    unit.zdolnosci.forEach((skill, index) => {
         const clone = template.content.firstElementChild.cloneNode(true);
 
         const nameElement = clone.querySelector(".skill-name");
@@ -965,6 +1196,39 @@ function renderSkills(unit) {
             descriptionInput.addEventListener("input", () => {
                 skill.opis = descriptionInput.value;
             });
+
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Usuń";
+
+            deleteButton.addEventListener("click", () => {
+                deleteSkill(skill.id);
+            });
+
+            const upButton = document.createElement("button");
+            upButton.type = "button";
+            upButton.textContent = "↑";
+            upButton.title = "Przesuń w górę";
+            upButton.disabled = index === 0;
+
+            upButton.addEventListener("click", () => {
+                moveEntry("zdolnosci", skill.id, -1);
+            });
+
+            const downButton = document.createElement("button");
+            downButton.type = "button";
+            downButton.textContent = "↓";
+            downButton.title = "Przesuń w dół";
+            downButton.disabled = index === unit.zdolnosci.length - 1;
+
+            downButton.addEventListener("click", () => {
+                moveEntry("zdolnosci", skill.id, 1);
+            });
+
+            clone.appendChild(upButton);
+            clone.appendChild(downButton);
+            clone.appendChild(deleteButton);
 
             descriptionElement.replaceWith(descriptionInput);
 
@@ -1023,28 +1287,36 @@ function editSkill(skillId) {
 }
 
 
-function deleteSkill(skillId) {
-    const unit = findUnit();
+function deleteSkill(itemId) {
+    if (!editingUnitDraft) return;
 
-    if (!unit) return;
+    editingUnitDraft.zdolnosci =
+        editingUnitDraft.zdolnosci.filter(item => item.id !== itemId);
 
-    const skill = unit.zdolnosci.find(
-        item => item.id === skillId
-    );
-
-    if (!skill) return;
-
-    if (!confirm(`Usunąć zdolność "${skill.nazwa}"?`)) {
-        return;
-    }
-
-    unit.zdolnosci = unit.zdolnosci.filter(
-        item => item.id !== skillId
-    );
-
-    persistAndRender();
+    renderUnitEditor();
 }
 
+
+
+function moveEntry(collectionName, entryId, direction) {
+    if (!editingUnitDraft) return;
+
+    const collection = editingUnitDraft[collectionName];
+
+    const currentIndex = collection.findIndex(x => x.id === entryId);
+    if (currentIndex === -1) return;
+
+    const newIndex = currentIndex + direction;
+
+    // Nie przesuwamy poza początek ani koniec listy
+    if (newIndex < 0 || newIndex >= collection.length) return;
+
+    // Zamiana miejscami
+    [collection[currentIndex], collection[newIndex]] =
+        [collection[newIndex], collection[currentIndex]];
+
+    renderUnitEditor();
+}
 
 /* =========================================
    11. IMPORT JSON
@@ -1261,6 +1533,9 @@ function initializeEvents() {
     document.getElementById("rosterCorruption")
         .addEventListener("change", updateRosterAdditionalInfo);
 
+    document.getElementById("btnAddFactionSkill")
+        .addEventListener("click", addFactionSkill);
+
     // Jednostki
 
     document.getElementById("btnAddUnit")
@@ -1268,6 +1543,9 @@ function initializeEvents() {
 
     document.getElementById("btnEditUnit")
         .addEventListener("click", editUnit);
+
+    document.getElementById("btnDuplicateUnit")
+        .addEventListener("click", duplicateUnit);
 
     document.getElementById("btnDeleteUnit")
         .addEventListener("click", deleteUnit);
@@ -1310,6 +1588,7 @@ function initializeEvents() {
     const unitFields = [
         "unitName",
         "unitCost",
+        "unitExp",
         ...STAT_DEFINITIONS.flatMap(stat => [
             `unit${stat.key.toUpperCase()}Current`,
             `unit${stat.key.toUpperCase()}Max`
