@@ -84,16 +84,7 @@
                     </div>
 
 
-                    <div class="roster-faction-skills">
-                        <div class="section-header">
-                            <h3>Zdolności frakcyjne</h3>
-                            <button id="btnAddFactionSkill" type="button" class="btn-small">
-                                Dodaj zdolność
-                            </button>
-                        </div>
-
-                        <div id="rosterFactionSkillsList"></div>
-                    </div>
+                
 
                 </div>
             </section>
@@ -102,6 +93,8 @@
                 <div class="section-header">
                     <h2>Jednostki</h2>
                     <button id="btnAddUnit" type="button" class="btn-small">+ Dodaj jednostkę</button>
+                    <button id="btnFractionRules" type="button" class="btn-small">+ Dodaj Zdolności Frakcyjne</button>
+                    <button id="btnPowoz" type="button" class="btn-small">+ Dodaj Powóz</button>
                 </div>
 
                 <div id="unitsList" class="units-list"></div>
@@ -153,7 +146,7 @@
                 <div class="unit-stats">
                     <h3 id="unitStatsH3">Statystyki</h3>
 
-                    <div class="stats-section">
+                    <div class="stats-section" id="unitCurrentStats">
                         <h4 id="unitStatsIbecneH4">Obecne</h4>
 
                         <div class="stats-grid">
@@ -260,10 +253,10 @@
                     </div>
                 </div>
 
-                <div class="unit-items">
+                <div class="unit-items" id="unitPrzedmiotyGroup">
 
                     <div class="section-header">
-                        <h3>Przedmioty</h3>
+                        <h3 >Przedmioty</h3>
 
                     </div>
 

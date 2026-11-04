@@ -321,6 +321,26 @@ button {
    9. LISTA JEDNOSTEK
 ========================================= */
 
+.faction-skills-card {
+    background-color: #3b2d4f;
+    border: 1px solid #8e6bb5;
+    color: #e6d8f5;
+}
+
+    .faction-skills-card .unit-card-name {
+        font-weight: bold;
+        color: #d5b8ff;
+    }
+
+    .faction-skills-card .unit-card-cost {
+        display: none;
+    }
+
+    .faction-skills-card.selected {
+        border: 2px solid #c69aff;
+        background-color: #514064;
+    }
+
 .units-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

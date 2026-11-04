@@ -358,12 +358,28 @@ function renderUnits() {
 
     const template = document.getElementById("unitTemplate");
 
-    roster.jednostki.forEach(unit => {
+    [...roster.jednostki]
+        .sort((a, b) => {
+            const getPriority = unit => {
+                if (unit.typ === "zdolnosciFrakcyjne") return 1;
+                if (unit.typ === "powoz") return 2;
+                return 3;
+            };
+
+            return getPriority(a) - getPriority(b);
+        })
+        .forEach(unit => {
         const card = template.content.firstElementChild.cloneNode(true);
 
         if (unit.id === selectedUnitId) {
             card.classList.add("selected");
         }
+        if (unit.typ === "zdolnosciFrakcyjne") {
+            card.classList.add("faction-skills-card");
+        }
+            if (unit.typ === "powoz") {
+                card.classList.add("faction-skills-card");
+            }
 
         card.querySelector(".unit-card-name").textContent = unit.nazwa;
 
@@ -440,36 +456,72 @@ function renderUnitEditor() {
     ensureUnitStats(unit);
 
     const isEditing = editingUnitDraft !== null;
+    const displayedUnit = isEditing ? editingUnitDraft : unit;
+    const isFactionSkills = displayedUnit.typ === "zdolnosciFrakcyjne";
+    const isPowoz = displayedUnit.typ === "powoz";
 
+    // Przyciski główne
     document.getElementById("btnEditUnit").hidden = isEditing;
     document.getElementById("btnDeleteUnit").hidden = isEditing;
 
     document.getElementById("btnSaveUnitChanges").hidden = !isEditing;
     document.getElementById("btnCancelUnitChanges").hidden = !isEditing;
 
-    document.getElementById("btnAddItem").hidden = !isEditing;
+    // Przyciski dodawania
+    document.getElementById("btnAddItem").hidden =
+        !isEditing || isFactionSkills;
+
     document.getElementById("btnAddSkill").hidden = !isEditing;
 
-    document.getElementById("unitName").hidden = !isEditing;
-    document.getElementById("unitCost").hidden = !isEditing;
-    document.getElementById("unitExp").hidden = !isEditing;
+    // Pola podstawowe
+    document.getElementById("unitName").hidden =
+        !isEditing || isFactionSkills || isPowoz;
 
-    document.getElementById("unitNameLabel").hidden = !isEditing;
-    document.getElementById("unitCostLabel").hidden = !isEditing;
-    document.getElementById("unitExpLabel").hidden = !isEditing;
-    document.getElementById("progiAwansu").hidden = !isEditing;
-    document.getElementById("progiAwansu1").hidden = !isEditing;
-    document.getElementById("progiAwansu2").hidden = !isEditing;
+    document.getElementById("unitCost").hidden =
+        !isEditing || isFactionSkills || isPowoz;
 
-    document.getElementById("unitMaxStats").hidden = !isEditing;
-    document.getElementById("unitStatsH3").hidden = !isEditing;
-    document.getElementById("unitStatsIbecneH4").hidden = !isEditing;
+    document.getElementById("unitExp").hidden =
+        !isEditing || isFactionSkills || isPowoz;
 
-    const displayedUnit = isEditing ? editingUnitDraft : unit;
+    document.getElementById("unitNameLabel").hidden =
+        !isEditing || isFactionSkills || isPowoz;
 
+    document.getElementById("unitCostLabel").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    document.getElementById("unitExpLabel").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    // Progi awansu
+    document.getElementById("progiAwansu").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    document.getElementById("progiAwansu1").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    document.getElementById("progiAwansu2").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    // Statystyki
+    document.getElementById("unitMaxStats").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+
+    document.getElementById("unitCurrentStats").hidden = isFactionSkills || isPowoz;
+
+    document.getElementById("unitPrzedmiotyGroup").hidden = isFactionSkills;
+
+    document.getElementById("unitStatsH3").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    document.getElementById("unitStatsIbecneH4").hidden =
+        !isEditing || isFactionSkills || isPowoz;
+
+    // Tytuł edytora
     document.getElementById("unitEditorTitle").textContent =
         displayedUnit.nazwa;
 
+    // Wartości pól
     document.getElementById("unitName").value =
         displayedUnit.nazwa;
 
@@ -479,6 +531,7 @@ function renderUnitEditor() {
     document.getElementById("unitExp").value =
         displayedUnit.exp;
 
+    // Statystyki
     STAT_DEFINITIONS.forEach(stat => {
         document.getElementById(
             `unit${stat.key.toUpperCase()}Current`
@@ -489,11 +542,12 @@ function renderUnitEditor() {
         ).value = displayedUnit.statystyki[stat.key].maksymalne;
     });
 
+    // Blokowanie lub odblokowanie pól
     setUnitFieldsEditable(isEditing);
 
+    // Przedmioty i zdolności
     renderItems(displayedUnit);
     renderSkills(displayedUnit);
-    renderF
 }
 
 
@@ -772,6 +826,75 @@ function addUnit() {
     const unit = {
         id: generateId(),
         nazwa: "",
+        koszt: 0,
+        exp: 0,
+        statystyki,
+        przedmioty: [],
+        zdolnosci: []
+    };
+
+    roster.jednostki.push(unit);
+
+    selectedUnitId = unit.id;
+    editingUnitDraft = null;
+
+    persistAndRender();
+}
+
+
+function addFractionRules() {
+    const roster = findRoster();
+
+    if (!roster) return;
+
+    const statystyki = {};
+
+    for (const stat of STAT_DEFINITIONS) {
+        statystyki[stat.key] = {
+            obecne: 0,
+            maksymalne: 0
+        };
+    }
+
+
+    const unit = {
+        id: generateId(),
+        typ: "zdolnosciFrakcyjne",
+        nazwa: "Zdolności Frakcyjne",
+        koszt: 0,
+        exp: 0,
+        statystyki,
+        przedmioty: [],
+        zdolnosci: []
+    };
+
+    roster.jednostki.push(unit);
+
+    selectedUnitId = unit.id;
+    editingUnitDraft = null;
+
+    persistAndRender();
+}
+
+function addPowoz() {
+    const roster = findRoster();
+
+    if (!roster) return;
+
+    const statystyki = {};
+
+    for (const stat of STAT_DEFINITIONS) {
+        statystyki[stat.key] = {
+            obecne: 0,
+            maksymalne: 0
+        };
+    }
+
+
+    const unit = {
+        id: generateId(),
+        typ: "powoz",
+        nazwa: "Powóz",
         koszt: 0,
         exp: 0,
         statystyki,
@@ -1533,13 +1656,18 @@ function initializeEvents() {
     document.getElementById("rosterCorruption")
         .addEventListener("change", updateRosterAdditionalInfo);
 
-    document.getElementById("btnAddFactionSkill")
-        .addEventListener("click", addFactionSkill);
+    
 
     // Jednostki
 
     document.getElementById("btnAddUnit")
         .addEventListener("click", addUnit);
+
+    document.getElementById("btnFractionRules")
+        .addEventListener("click", addFractionRules);
+
+    document.getElementById("btnPowoz")
+        .addEventListener("click", addPowoz);
 
     document.getElementById("btnEditUnit")
         .addEventListener("click", editUnit);
